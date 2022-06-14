@@ -13,3 +13,11 @@ I created this project to learn [dynamic library loading](https://medium.com/lea
     cd conv/cmd/conv
     go install
     ```    
+4. Make sure you have GOPATH in your PATH:  
+    ```
+    export PATH=$HOME/go/bin:$PATH
+    ```
+5. Run
+    ```
+    conv 127.0.0.1
+    ```
