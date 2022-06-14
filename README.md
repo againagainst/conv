@@ -6,18 +6,24 @@ I created this project to learn [dynamic library loading](https://medium.com/lea
 
 ### Installation
 1. Install [Go](https://go.dev/doc/install)
-2. Fetch this repo  
-    `git clone https://github.com/againagainst/conv.git`
-3. Build and install    
+2. Make sure you have GOPATH in your PATH:  
+    ```
+    export PATH=$HOME/go/bin:$PATH
+    ```
+3. Fetch this repo  
+    ```
+    git clone https://github.com/againagainst/conv.git
+    ```
+4. Build and install    
     ```
     cd conv/cmd/conv
     go install
     ```    
-4. Make sure you have GOPATH in your PATH:  
-    ```
-    export PATH=$HOME/go/bin:$PATH
-    ```
-5. Run
-    ```
-    conv 127.0.0.1
-    ```
+
+### Usage
+```
+conv 149.76.12.4
+conv 149.76.12.0 to ipv6
+conv 9 inch to cm 
+conv 150 nok to usd
+```
