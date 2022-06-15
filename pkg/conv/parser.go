@@ -1,8 +1,21 @@
 package conv
 
 import (
+	"fmt"
+
 	flag "github.com/spf13/pflag"
 )
+
+type Input struct {
+	Value    string
+	FromUnit string
+	ToUnit   string
+	Context  string
+}
+
+func (in Input) String() string {
+	return fmt.Sprintf("%s %s to %s [%s]", in.Value, in.FromUnit, in.ToUnit, in.Context)
+}
 
 func ParseArgs() *Input {
 	var context string

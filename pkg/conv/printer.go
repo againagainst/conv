@@ -2,6 +2,12 @@ package conv
 
 import "fmt"
 
-func (output *Output) Sprint() string {
-	return fmt.Sprintf("%s (%s)", output.Value, output.Unit)
+type Output struct {
+	Value   string
+	Unit    string
+	Context string
+}
+
+func (out Output) String() string {
+	return fmt.Sprintf("%s (%s)", out.Value, out.Unit)
 }
