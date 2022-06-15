@@ -6,7 +6,34 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/againagainst/conv/pkg/conv"
 )
+
+type IpPlugin struct{}
+
+func (p IpPlugin) Run(in *conv.Input) (*conv.Output, error) {
+	value, err := Ipv4ToHex(in.Value)
+	if err != nil {
+		return nil, err
+	}
+	output := &conv.Output{
+		Value:   value,
+		Unit:    "hex",
+		Context: "ip",
+	}
+	return output, err
+}
+
+func (p IpPlugin) Context() string {
+	return "ip"
+}
+
+func (p IpPlugin) Units() []string {
+	return []string{"hex", "ip"}
+}
+
+var PluginImpl IpPlugin
 
 func Ipv4ToHex(ipv4 string) (string, error) {
 	ipv4RegexpText := []string{

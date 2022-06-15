@@ -3,22 +3,28 @@ package conv
 import "fmt"
 
 type Input struct {
-	value    string
-	fromUnit string
-	toUnit   string
-	context  string
+	Value    string
+	FromUnit string
+	ToUnit   string
+	Context  string
 }
 
 type Output struct {
-	value   string
-	unit    string
-	context string
+	Value   string
+	Unit    string
+	Context string
+}
+
+type ConvPlugin interface {
+	Run(in *Input) (*Output, error)
+	Context() string
+	Units() []string
 }
 
 func (in Input) String() string {
-	return fmt.Sprintf("%s %s to %s [%s]", in.value, in.fromUnit, in.toUnit, in.context)
+	return fmt.Sprintf("%s %s to %s [%s]", in.Value, in.FromUnit, in.ToUnit, in.Context)
 }
 
 func (out Output) String() string {
-	return fmt.Sprintf("%s %s [%s]", out.value, out.unit, out.context)
+	return fmt.Sprintf("%s %s [%s]", out.Value, out.Unit, out.Context)
 }

@@ -13,9 +13,9 @@ func ParseArgs() *Input {
 	arguments := flag.Args()
 
 	return &Input{
-		value:    arguments[0],
-		fromUnit: arguments[1],
-		toUnit:   toUnit,
-		context:  context,
+		Value:    arguments[0],
+		FromUnit: arguments[1],
+		ToUnit:   toUnit,
+		Context:  context,
 	}
 }

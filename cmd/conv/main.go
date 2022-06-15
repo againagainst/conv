@@ -8,5 +8,10 @@ import (
 
 func main() {
 	input := conv.ParseArgs()
-	fmt.Println(input)
+	output, err := conv.LoadPlugin(input)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(output.Sprint())
+	}
 }
