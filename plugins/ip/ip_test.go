@@ -1,4 +1,4 @@
-package conv
+package main
 
 import "testing"
 
