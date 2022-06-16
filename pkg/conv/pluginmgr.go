@@ -4,15 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"plugin"
+	pluginLoader "plugin"
 	"strings"
 )
-
-type ConvPlugin interface {
-	Run(in *Input) (*Output, error)
-	Context() string
-	Units() []string
-}
 
 type PluginStorage struct {
 	Plugins map[string]ConvPlugin
@@ -26,9 +20,9 @@ func LoadPlugins(pluginDir string) *PluginStorage {
 	}
 
 	for _, pluginName := range listPlugins(pluginDir) {
-		pluginImpl := loadPlugin(pluginDir, pluginName)
-		if pluginImpl == nil {
-			fmt.Printf("Failed to load plugin %s\n", pluginName)
+		pluginImpl, err := loadPlugin(pluginDir, pluginName)
+		if err != nil {
+			fmt.Printf("Failed to load plugin %s; Reason: %s\n", pluginName, err)
 			continue
 		}
 		context := lower(pluginImpl.Context())
@@ -40,35 +34,52 @@ func LoadPlugins(pluginDir string) *PluginStorage {
 	return pluginStorage
 }
 
-func (pluginStorage *PluginStorage) FindPluginForUnit(unit string) ConvPlugin {
-	context, exists := pluginStorage.Units[lower(unit)]
-	if !exists {
-		return nil
+func (pluginStorage *PluginStorage) SendToPlugin(input *ConvInput) (*ConvOutput, error) {
+	plugin, err := pluginStorage.findPluginForUnit(input.FromUnit)
+	if err != nil {
+		return nil, err
 	}
-	return pluginStorage.Plugins[context]
+
+	pluginFlags := make(map[string]string)
+	pluginIn := input.ToPluginInput(pluginFlags)
+	pluginOut, err := plugin.Run(pluginIn)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ConvOutput{
+		Value:   pluginOut.Value,
+		Unit:    pluginOut.Unit,
+		Context: plugin.Context(),
+	}, nil
 }
 
-func loadPlugin(pluginDir, pluginName string) ConvPlugin {
-	plug, err := plugin.Open(pluginName)
+func (pluginStorage *PluginStorage) findPluginForUnit(unit string) (ConvPlugin, error) {
+	context, exists := pluginStorage.Units[lower(unit)]
+	if !exists {
+		return nil, fmt.Errorf("cannot find a plugin for %s unit", unit)
+	}
+	return pluginStorage.Plugins[context], nil
+}
+
+func loadPlugin(pluginDir, pluginName string) (ConvPlugin, error) {
+	plugin, err := pluginLoader.Open(pluginName)
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 
-	pluginImpl, err := plug.Lookup("PluginImpl")
+	pluginImpl, err := plugin.Lookup("PluginImpl")
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 
 	var convPlugin ConvPlugin
 	convPlugin, ok := pluginImpl.(ConvPlugin)
 	if !ok {
-		fmt.Println("unexpected type from module symbol")
-		return nil
+		return nil, fmt.Errorf("unexpected type from module symbol")
 	}
 
-	return convPlugin
+	return convPlugin, nil
 }
 
 func listPlugins(pluginDir string) []string {

@@ -10,7 +10,7 @@ import (
 
 type BitsPlugin struct{}
 
-func (p BitsPlugin) Run(in *conv.Input) (*conv.Output, error) {
+func (p BitsPlugin) Run(in *conv.PluginInput) (*conv.PluginOutput, error) {
 	toUnit := "mb"
 	if in.ToUnit != "default" {
 		toUnit = in.ToUnit
@@ -21,10 +21,9 @@ func (p BitsPlugin) Run(in *conv.Input) (*conv.Output, error) {
 		return nil, err
 	}
 
-	output := &conv.Output{
-		Value:   value,
-		Unit:    toUnit,
-		Context: "bits",
+	output := &conv.PluginOutput{
+		Value: value,
+		Unit:  toUnit,
 	}
 	return output, err
 }

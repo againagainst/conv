@@ -12,15 +12,14 @@ import (
 
 type IpPlugin struct{}
 
-func (p IpPlugin) Run(in *conv.Input) (*conv.Output, error) {
+func (p IpPlugin) Run(in *conv.PluginInput) (*conv.PluginOutput, error) {
 	value, err := Ipv4ToHex(in.Value)
 	if err != nil {
 		return nil, err
 	}
-	output := &conv.Output{
-		Value:   value,
-		Unit:    "hex",
-		Context: "ip",
+	output := &conv.PluginOutput{
+		Value: value,
+		Unit:  "hex",
 	}
 	return output, err
 }
