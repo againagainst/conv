@@ -1,3 +1,6 @@
+echo "mkdir -p bin/plugins"
+mkdir -p bin/plugins
+
 echo "rm bin/conv"
 rm bin/conv
 

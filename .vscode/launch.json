@@ -4,21 +4,21 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
-        {
-            "name": "Conv Main",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/cmd/conv"
-        },
         {
             "name": "Conv Full",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/conv",
-            "args": ["9", "inch", "--to", "cm", "--context=distance"]
+            "args": ["123.1.123.1", "ip", "--to=hex", "--context=bits"]
+        },
+        {
+            "name": "Debug bin/conv",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/bin/conv",
+            "args": ["123.1.123.1", "ip", "--to=hex", "--context=bits"]
         }
     ]
 }

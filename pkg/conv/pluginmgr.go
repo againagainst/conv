@@ -22,7 +22,7 @@ func LoadPlugins(pluginDir string) *PluginStorage {
 	for _, pluginName := range listPlugins(pluginDir) {
 		pluginImpl, err := loadPlugin(pluginDir, pluginName)
 		if err != nil {
-			fmt.Printf("Failed to load plugin %s; Reason: %s\n", pluginName, err)
+			fmt.Printf("Failed to load plugin '%s'; Reason: '%s'\n", pluginName, err)
 			continue
 		}
 		context := lower(pluginImpl.Context())
@@ -35,10 +35,24 @@ func LoadPlugins(pluginDir string) *PluginStorage {
 }
 
 func (pluginStorage *PluginStorage) SendToPlugin(input *ConvInput) (*ConvOutput, error) {
-	plugin, err := pluginStorage.findPluginForUnit(input.FromUnit)
-	if err != nil {
+	var plugin ConvPlugin
+	var err error
+
+	if ok, err := pluginStorage.hasUnitInContext(input.FromUnit, input.Context); !ok {
 		return nil, err
 	}
+
+	if ok, err := pluginStorage.hasUnitInContext(input.ToUnit, input.Context); !ok {
+		return nil, err
+	}
+
+	if input.Context == "auto" {
+		plugin = pluginStorage.findPluginForUnit(input.FromUnit)
+	} else {
+		plugin = pluginStorage.findPluginForContext(input.Context)
+	}
+
+	//fmt.Printf("Found plugin %s for unit %s", plugin.Context(), input.FromUnit)
 
 	pluginFlags := make(map[string]string)
 	pluginIn := input.ToPluginInput(pluginFlags)
@@ -47,19 +61,32 @@ func (pluginStorage *PluginStorage) SendToPlugin(input *ConvInput) (*ConvOutput,
 		return nil, err
 	}
 
-	return &ConvOutput{
+	output := &ConvOutput{
 		Value:   pluginOut.Value,
 		Unit:    pluginOut.Unit,
 		Context: plugin.Context(),
-	}, nil
+	}
+	return output, nil
 }
 
-func (pluginStorage *PluginStorage) findPluginForUnit(unit string) (ConvPlugin, error) {
-	context, exists := pluginStorage.Units[lower(unit)]
-	if !exists {
-		return nil, fmt.Errorf("cannot find a plugin for %s unit", unit)
+func (pluginStorage *PluginStorage) findPluginForUnit(unit string) ConvPlugin {
+	context := pluginStorage.Units[lower(unit)]
+	return pluginStorage.findPluginForContext(context)
+}
+
+func (pluginStorage *PluginStorage) findPluginForContext(context string) ConvPlugin {
+	return pluginStorage.Plugins[lower(context)]
+}
+
+func (pluginStorage *PluginStorage) hasUnitInContext(unit, context string) (bool, error) {
+	unitContext, foundContext := pluginStorage.Units[lower(unit)]
+	if !foundContext {
+		return false, fmt.Errorf("a plugin for unit '%s' is not registered", unit)
 	}
-	return pluginStorage.Plugins[context], nil
+	if !(lower(context) == unitContext || lower(context) == "auto") {
+		return false, fmt.Errorf("plugin '%s' does not support unit '%s'; did you mean '%s'?", context, unit, unitContext)
+	}
+	return true, nil
 }
 
 func loadPlugin(pluginDir, pluginName string) (ConvPlugin, error) {
