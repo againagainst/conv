@@ -21,3 +21,12 @@ go build -buildmode=plugin -o ip.so ip.go
 
 echo "mv ip.so ../../bin/plugins/ip.so"
 mv ip.so ../../bin/plugins/ip.so
+
+echo "cd ../../plugins/bits"
+cd ../../plugins/bits
+
+echo "go build -buildmode=plugin -o bits.so bits.go"
+go build -buildmode=plugin -o bits.so bits.go
+
+echo "mv bits.so ../../bin/plugins/bits.so"
+mv bits.so ../../bin/plugins/bits.so
