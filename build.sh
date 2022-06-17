@@ -1,35 +1,28 @@
-echo "mkdir -p bin/plugins"
-mkdir -p bin/plugins
+ROOT=$PWD
 
-echo "rm bin/conv"
-rm bin/conv
+SRC_BIN=$ROOT/cmd/conv
+SRC_PLUGINS=$ROOT/plugins
 
-echo "rm bin/plugins/ip.so"
-rm bin/plugins/ip.so
+TARGET_BIN=$ROOT/bin
+TARGET_PLUGINS=$TARGET_BIN/plugins
 
-echo "cd cmd/conv"
-cd cmd/conv
+echo "mkdir -p $TARGET_PLUGINS"
+mkdir -p $TARGET_PLUGINS
 
-echo "go build -o conv main.go"
-go build -o conv main.go
+echo "cd $SRC_BIN"
+cd $SRC_BIN
 
-echo "mv conv ../../bin"
-mv conv ../../bin
+echo "go build -o $TARGET_BIN/conv main.go"
+go build -o $TARGET_BIN/conv main.go
 
-echo "cd ../../plugins/ip"
-cd ../../plugins/ip
+echo "cd $SRC_PLUGINS/ip"
+cd $SRC_PLUGINS/ip
 
-echo "go build -buildmode=plugin -o ip.so ip.go"
-go build -buildmode=plugin -o ip.so ip.go
+echo "go build -buildmode=plugin -o $TARGET_PLUGINS/ip.so ip.go"
+go build -buildmode=plugin -o $TARGET_PLUGINS/ip.so ip.go
 
-echo "mv ip.so ../../bin/plugins/ip.so"
-mv ip.so ../../bin/plugins/ip.so
+echo "cd $SRC_PLUGINS/bits"
+cd $SRC_PLUGINS/bits
 
-echo "cd ../../plugins/bits"
-cd ../../plugins/bits
-
-echo "go build -buildmode=plugin -o bits.so bits.go"
-go build -buildmode=plugin -o bits.so bits.go
-
-echo "mv bits.so ../../bin/plugins/bits.so"
-mv bits.so ../../bin/plugins/bits.so
+echo "go build -buildmode=plugin -o $TARGET_PLUGINS/bits.so bits.go"
+go build -buildmode=plugin -o $TARGET_PLUGINS/bits.so bits.go
