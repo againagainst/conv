@@ -9,7 +9,7 @@ PLUGIN_TARGETS = $(PLUGIN_NAMES:%=bin/plugins/%.so)
 .PHONY = all clean debug
 .DEFAULT = all
 
-all: $(APP_TARGET) $(PLUGIN_TARGETS)
+all: clean $(APP_TARGET) $(PLUGIN_TARGETS)
 
 clean:
 	rm -f $(APP_TARGET) 
@@ -19,5 +19,4 @@ $(APP_TARGET):
 	$(GOCMD) build -o $@ ./cmd/conv
 
 $(PLUGIN_TARGETS):
-	@echo "ARG: $@ | $<"
 	$(GOCMD) build -buildmode=plugin -o $@ ./plugins/$(@:bin/plugins/%.so=%)/$(@:bin/plugins/%.so=%).go
