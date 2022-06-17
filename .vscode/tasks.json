@@ -4,29 +4,15 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "install",
+            "label": "build",
             "type": "shell",
-            "command": "go install",
+            "command": "make",
             "options": {
-                "cwd": "${workspaceFolder}/cmd/conv"
+                "cwd": "${workspaceFolder}"
             },
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "problemMatcher": [
-                "$go"
-            ]
-        },
-        {
-            "label": "build",
-            "type": "shell",
-            "command": "go build",
-            "options": {
-                "cwd": "${workspaceFolder}/cmd/conv"
-            },
-            "group": {
-                "kind": "build"
             },
             "problemMatcher": [
                 "$go"
