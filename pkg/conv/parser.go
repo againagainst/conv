@@ -41,6 +41,10 @@ func ParseArgs() *ConvInput {
 	flag.Parse()
 	arguments := flag.Args()
 
+	if len(arguments) < 2 {
+		return nil
+	}
+
 	return &ConvInput{
 		Value:    arguments[0],
 		FromUnit: arguments[1],
@@ -49,4 +53,16 @@ func ParseArgs() *ConvInput {
 		Verbose:  *verbose,
 		Raw:      *raw,
 	}
+}
+
+func PrintUsage() {
+	fmt.Print(
+		`
+conv ./FROM unit [--to unit] [--raw] [--verbose] [--kind=plugin]
+
+Examples:
+conv 192.168.1.1 ip --to hex
+conv 640 kb --to mb
+`,
+	)
 }
